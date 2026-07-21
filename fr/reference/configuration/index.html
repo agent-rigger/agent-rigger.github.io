@@ -1,0 +1,549 @@
+<!DOCTYPE html><html lang="fr" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-vdxcvpsm"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Configuration et fichiers d'état | agent-rigger</title><link rel="canonical" href="https://agent-rigger.dev/fr/reference/configuration/"/><link rel="alternate" hreflang="en" href="https://agent-rigger.dev/reference/configuration/"/><link rel="alternate" hreflang="fr" href="https://agent-rigger.dev/fr/reference/configuration/"/><link rel="alternate" hreflang="x-default" href="https://agent-rigger.dev/reference/configuration/"/><link rel="sitemap" href="/sitemap-index.xml"/><link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml"/><meta name="generator" content="Astro v7.0.7"/><meta name="generator" content="Starlight v0.41.3"/><meta property="og:title" content="Configuration et fichiers d'état"/><meta property="og:type" content="article"/><meta property="og:url" content="https://agent-rigger.dev/fr/reference/configuration/"/><meta property="og:locale" content="fr"/><meta property="og:description" content="Les fichiers locaux qu'agent-rigger lit et écrit (config.json, state.json, consent.json) champ par champ, plus les variables d'environnement qu'il honore : RIGGER_HOME, HOME, NO_COLOR, RIGGER_SCOPE, RIGGER_AUTH_METHOD."/><meta property="og:site_name" content="agent-rigger"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Les fichiers locaux qu'agent-rigger lit et écrit (config.json, state.json, consent.json) champ par champ, plus les variables d'environnement qu'il honore : RIGGER_HOME, HOME, NO_COLOR, RIGGER_SCOPE, RIGGER_AUTH_METHOD."/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/_astro/print.ehPL0gv-.css" media="print"><link rel="stylesheet" href="/_astro/common.CeDv6tO7.css"><style>@layer starlight.components{.card-grid:where(.astro-lmor3ela){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-lmor3ela)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-lmor3ela){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-lmor3ela){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-lmor3ela)>:nth-child(2n){transform:translateY(var(--stagger-height))}}.sl-link-card:where(.astro-vodiqeol){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-vodiqeol){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-vodiqeol):before{content:"";position:absolute;inset:0}.stack:where(.astro-vodiqeol){flex-direction:column;gap:.5rem}.title:where(.astro-vodiqeol){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-vodiqeol){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-vodiqeol){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-vodiqeol):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-vodiqeol):hover .icon:where(.astro-vodiqeol){color:var(--sl-color-white)}}
+@layer starlight.components{svg:where(.astro-n5k4ipy7){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em}}
+</style><script type="module" src="/_astro/page.B2uBVZjk.js"></script></head><body class="astro-vdxcvpsm"><a class="sl-skip-link astro-vxeigawq" href="#_top">Aller au contenu</a><div class="page sl-flex astro-gqpr5s5a"><header class="header astro-gqpr5s5a"><div class="header astro-nczgtkxc"><div class="title-wrapper sl-flex astro-nczgtkxc"><a href="/fr" class="site-title sl-flex astro-clw6ags5"><span class="astro-clw6ags5" translate="no">agent-rigger</span></a></div><div class="sl-flex print:hidden astro-nczgtkxc"><site-search class="astro-nczgtkxc astro-r5ar4xm7" data-translations="{&quot;placeholder&quot;:&quot;Rechercher&quot;}"><button data-open-modal disabled aria-label="Rechercher" aria-keyshortcuts="Control+K" class="astro-r5ar4xm7"><svg aria-hidden="true" class="astro-r5ar4xm7 astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-r5ar4xm7" aria-hidden="true">Rechercher</span><kbd class="sl-hidden md:sl-flex astro-r5ar4xm7" style="display: none;"><kbd class="astro-r5ar4xm7">Ctrl</kbd><kbd class="astro-r5ar4xm7">K</kbd></kbd></button><dialog style="padding:0" aria-label="Rechercher" class="astro-r5ar4xm7"><div class="dialog-frame sl-flex astro-r5ar4xm7"><button data-close-modal class="sl-flex md:sl-hidden astro-r5ar4xm7">Annuler</button><div class="search-container astro-r5ar4xm7"><div id="starlight__search" class="astro-r5ar4xm7"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.vTFUHulS.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-nczgtkxc"><div class="sl-flex social-icons astro-nczgtkxc"><a class="docs-topbar-link astro-o2gh7vpa" href="/fr/start/getting-started/">Docs</a><a href="https://github.com/agent-rigger/agent-rigger" rel="me" class="sl-flex astro-cg55etiy"><span class="sr-only astro-cg55etiy">GitHub</span><svg aria-hidden="true" class="astro-cg55etiy astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-r2p65idu"><span class="sr-only astro-r2p65idu">Selectionner le thème</span><svg aria-hidden="true" class="icon label-icon astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-r2p65idu"><option value="dark" class="astro-r2p65idu">Sombre</option><option value="light" class="astro-r2p65idu">Clair</option><option value="auto" selected class="astro-r2p65idu">Auto</option></select><svg aria-hidden="true" class="icon caret astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><starlight-lang-select><label style="--sl-select-width: 7em" class="astro-r2p65idu"><span class="sr-only astro-r2p65idu">Selectionner la langue</span><svg aria-hidden="true" class="icon label-icon astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path fill-rule="evenodd" d="M8.516 3a.94.94 0 0 0-.941.94v1.15H2.94a.94.94 0 1 0 0 1.882h7.362a7.422 7.422 0 0 1-1.787 3.958 7.42 7.42 0 0 1-1.422-2.425.94.94 0 1 0-1.774.627 9.303 9.303 0 0 0 1.785 3.043 7.422 7.422 0 0 1-4.164 1.278.94.94 0 1 0 0 1.881 9.303 9.303 0 0 0 5.575-1.855 9.303 9.303 0 0 0 4.11 1.74l-.763 1.525a.968.968 0 0 0-.016.034l-1.385 2.77a.94.94 0 1 0 1.683.841l1.133-2.267h5.806l1.134 2.267a.94.94 0 0 0 1.683-.841l-1.385-2.769a.95.95 0 0 0-.018-.036l-3.476-6.951a.94.94 0 0 0-1.682 0l-1.82 3.639a7.423 7.423 0 0 1-3.593-1.256 9.303 9.303 0 0 0 2.27-5.203h1.894a.94.94 0 0 0 0-1.881H9.456V3.94A.94.94 0 0 0 8.516 3Zm6.426 11.794a1.068 1.068 0 0 1-.02.039l-.703 1.407h3.924l-1.962-3.924-1.24 2.478Z" clip-rule="evenodd"/></svg><select autocomplete="off" class="astro-r2p65idu"><option value="/reference/configuration/" class="astro-r2p65idu">English</option><option value="/fr/reference/configuration/" selected class="astro-r2p65idu">Français</option></select><svg aria-hidden="true" class="icon caret astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-lang-select><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-gqpr5s5a" aria-label="principale"><starlight-menu-button class="print:hidden astro-vvx7mffu"><button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-vvx7mffu"><svg aria-hidden="true" class="open-menu astro-vvx7mffu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-vvx7mffu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg></button></starlight-menu-button><script type="module">var e=class extends HTMLElement{btn=this.querySelector(`button`);constructor(){super(),this.btn.addEventListener(`click`,()=>this.toggleExpanded());let e=this.closest(`nav`);e&&e.addEventListener(`keyup`,e=>this.closeOnEscape(e)),matchMedia(`(min-width: 50em)`).addEventListener(`change`,()=>this.setExpanded(!1))}setExpanded(e){this.setAttribute(`aria-expanded`,String(e)),document.body.toggleAttribute(`data-mobile-menu-expanded`,e),document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}toggleExpanded(){this.setExpanded(this.getAttribute(`aria-expanded`)!==`true`)}closeOnEscape(e){e.code===`Escape`&&(this.setExpanded(!1),this.btn.focus())}};customElements.define(`starlight-menu-button`,e);</script><div id="starlight__sidebar" class="sidebar-pane astro-gqpr5s5a"><div class="sidebar-content sl-flex astro-gqpr5s5a"><sl-sidebar-state-persist data-hash="0qu46m7" class="astro-f5yvicm7"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-ojxuodky"><li class="astro-ojxuodky"><details open class="astro-ojxuodky"><summary class="astro-ojxuodky"><span class="group-label astro-ojxuodky"><span class="large astro-ojxuodky">Pour commencer</span></span><svg aria-hidden="true" class="caret astro-ojxuodky astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-ojxuodky"><li class="astro-ojxuodky"><a href="/fr/start/what-is-agent-rigger/" class="astro-ojxuodky"><span class="astro-ojxuodky">Qu&#39;est-ce qu&#39;agent-rigger ?</span></a></li><li class="astro-ojxuodky"><a href="/fr/start/installation/" class="astro-ojxuodky"><span class="astro-ojxuodky">Installation</span></a></li><li class="astro-ojxuodky"><a href="/fr/start/getting-started/" class="astro-ojxuodky"><span class="astro-ojxuodky">Premiers pas</span></a></li><li class="astro-ojxuodky"><a href="/fr/start/sandbox/" class="astro-ojxuodky"><span class="astro-ojxuodky">Essayez-le dans un sandbox</span></a></li></ul></details></li><li class="astro-ojxuodky"><details open class="astro-ojxuodky"><summary class="astro-ojxuodky"><span class="group-label astro-ojxuodky"><span class="large astro-ojxuodky">Concepts</span></span><svg aria-hidden="true" class="caret astro-ojxuodky astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-ojxuodky"><li class="astro-ojxuodky"><a href="/fr/concepts/core-concepts/" class="astro-ojxuodky"><span class="astro-ojxuodky">Concepts fondamentaux</span></a></li><li class="astro-ojxuodky"><a href="/fr/concepts/artifact-natures/" class="astro-ojxuodky"><span class="astro-ojxuodky">Natures d&#39;artifact</span></a></li><li class="astro-ojxuodky"><a href="/fr/concepts/trust-and-security/" class="astro-ojxuodky"><span class="astro-ojxuodky">Confiance et sécurité</span></a></li><li class="astro-ojxuodky"><a href="/fr/concepts/one-source-many-assistants/" class="astro-ojxuodky"><span class="astro-ojxuodky">Une source, plusieurs assistants</span></a></li><li class="astro-ojxuodky"><a href="/fr/concepts/safety-and-reversibility/" class="astro-ojxuodky"><span class="astro-ojxuodky">Sûreté et réversibilité</span></a></li><li class="astro-ojxuodky"><a href="/fr/concepts/versioning-and-provenance/" class="astro-ojxuodky"><span class="astro-ojxuodky">Versions et provenance</span></a></li><li class="astro-ojxuodky"><a href="/fr/concepts/for-organizations/" class="astro-ojxuodky"><span class="astro-ojxuodky">L&#39;adopter pour une équipe</span></a></li></ul></details></li><li class="astro-ojxuodky"><details open class="astro-ojxuodky"><summary class="astro-ojxuodky"><span class="group-label astro-ojxuodky"><span class="large astro-ojxuodky">Guides — utiliser votre rig</span></span><svg aria-hidden="true" class="caret astro-ojxuodky astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-ojxuodky"><li class="astro-ojxuodky"><a href="/fr/guides/install-from-catalog/" class="astro-ojxuodky"><span class="astro-ojxuodky">Installer depuis un catalog</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/update-artifacts/" class="astro-ojxuodky"><span class="astro-ojxuodky">Mettre à jour les artifacts installés</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/remove-artifacts/" class="astro-ojxuodky"><span class="astro-ojxuodky">Supprimer des artifacts</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/ci-and-scripts/" class="astro-ojxuodky"><span class="astro-ojxuodky">Utiliser en CI et dans des scripts</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/ad-hoc-install/" class="astro-ojxuodky"><span class="astro-ojxuodky">Installer depuis une URL ou un chemin local</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/multiple-catalogs/" class="astro-ojxuodky"><span class="astro-ojxuodky">Travailler avec plusieurs catalogs</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/choose-assistant/" class="astro-ojxuodky"><span class="astro-ojxuodky">Cibler Claude Code ou opencode</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/mcp-secrets/" class="astro-ojxuodky"><span class="astro-ojxuodky">Donner son secret à un serveur MCP</span></a></li><li class="astro-ojxuodky"><a href="/fr/guides/doctor/" class="astro-ojxuodky"><span class="astro-ojxuodky">Diagnostiquer votre installation</span></a></li></ul></details></li><li class="astro-ojxuodky"><details open class="astro-ojxuodky"><summary class="astro-ojxuodky"><span class="group-label astro-ojxuodky"><span class="large astro-ojxuodky">Guides — créer un catalog</span></span><svg aria-hidden="true" class="caret astro-ojxuodky astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-ojxuodky"><li class="astro-ojxuodky"><a href="/fr/authoring/create-a-catalog/" class="astro-ojxuodky"><span class="astro-ojxuodky">Créer un catalog</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/skills/" class="astro-ojxuodky"><span class="astro-ojxuodky">Publier un skill</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/agents/" class="astro-ojxuodky"><span class="astro-ojxuodky">Publier un sous-agent</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/guardrails/" class="astro-ojxuodky"><span class="astro-ojxuodky">Publier un guardrail</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/hooks/" class="astro-ojxuodky"><span class="astro-ojxuodky">Publier un hook</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/packs/" class="astro-ojxuodky"><span class="astro-ojxuodky">Publier un pack</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/tools/" class="astro-ojxuodky"><span class="astro-ojxuodky">Déclarer une dépendance à un tool</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/release/" class="astro-ojxuodky"><span class="astro-ojxuodky">Publier une release</span></a></li><li class="astro-ojxuodky"><a href="/fr/authoring/mcp-servers/" class="astro-ojxuodky"><span class="astro-ojxuodky">Publier un serveur MCP</span></a></li></ul></details></li><li class="astro-ojxuodky"><details open class="astro-ojxuodky"><summary class="astro-ojxuodky"><span class="group-label astro-ojxuodky"><span class="large astro-ojxuodky">Référence</span></span><svg aria-hidden="true" class="caret astro-ojxuodky astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-ojxuodky"><li class="astro-ojxuodky"><details open class="astro-ojxuodky"><summary class="astro-ojxuodky"><span class="group-label astro-ojxuodky"><span class="large astro-ojxuodky">CLI</span></span><svg aria-hidden="true" class="caret astro-ojxuodky astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-ojxuodky"><li class="astro-ojxuodky"><a href="/fr/reference/cli/overview/" class="astro-ojxuodky"><span class="astro-ojxuodky">Vue d&#39;ensemble de la CLI</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/init/" class="astro-ojxuodky"><span class="astro-ojxuodky">init</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/install/" class="astro-ojxuodky"><span class="astro-ojxuodky">install</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/check/" class="astro-ojxuodky"><span class="astro-ojxuodky">check</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/update/" class="astro-ojxuodky"><span class="astro-ojxuodky">update</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/remove/" class="astro-ojxuodky"><span class="astro-ojxuodky">remove</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/ls/" class="astro-ojxuodky"><span class="astro-ojxuodky">ls</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/doctor/" class="astro-ojxuodky"><span class="astro-ojxuodky">doctor</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/catalog/" class="astro-ojxuodky"><span class="astro-ojxuodky">catalog</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/cli/resource-verbs/" class="astro-ojxuodky"><span class="astro-ojxuodky">resource verbs</span></a></li></ul></details></li><li class="astro-ojxuodky"><a href="/fr/reference/exit-codes/" class="astro-ojxuodky"><span class="astro-ojxuodky">Codes de sortie</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/catalog-schema/" class="astro-ojxuodky"><span class="astro-ojxuodky">Schéma de catalog.json</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/catalog-layout/" class="astro-ojxuodky"><span class="astro-ojxuodky">Structure d&#39;un dépôt de catalog</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/natures-matrix/" class="astro-ojxuodky"><span class="astro-ojxuodky">Natures × assistants × scopes</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/configuration/" aria-current="page" class="astro-ojxuodky"><span class="astro-ojxuodky">Configuration et fichiers d&#39;état</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/hook-events/" class="astro-ojxuodky"><span class="astro-ojxuodky">Events de hook</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/platforms/" class="astro-ojxuodky"><span class="astro-ojxuodky">Plateformes et prérequis</span></a></li><li class="astro-ojxuodky"><a href="/fr/reference/glossary/" class="astro-ojxuodky"><span class="astro-ojxuodky">Glossaire</span></a></li></ul></details></li><li class="astro-ojxuodky"><details open class="astro-ojxuodky"><summary class="astro-ojxuodky"><span class="group-label astro-ojxuodky"><span class="large astro-ojxuodky">Projet</span></span><svg aria-hidden="true" class="caret astro-ojxuodky astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="6"></sl-sidebar-restore><ul class="astro-ojxuodky"><li class="astro-ojxuodky"><a href="/fr/project/contributing/" class="astro-ojxuodky"><span class="astro-ojxuodky">Contribuer</span></a></li><li class="astro-ojxuodky"><a href="/fr/project/security-policy/" class="astro-ojxuodky"><span class="astro-ojxuodky">Politique de sécurité</span></a></li><li class="astro-ojxuodky"><a href="/fr/project/changelog/" class="astro-ojxuodky"><span class="astro-ojxuodky">Changelog</span></a></li><li class="astro-ojxuodky"><a href="/fr/project/license/" class="astro-ojxuodky"><span class="astro-ojxuodky">Licence</span></a></li></ul></details></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-b5gddk54"><div class="social-icons astro-b5gddk54"><a class="docs-topbar-link astro-o2gh7vpa" href="/fr/start/getting-started/">Docs</a><a href="https://github.com/agent-rigger/agent-rigger" rel="me" class="sl-flex astro-cg55etiy"><span class="sr-only astro-cg55etiy">GitHub</span><svg aria-hidden="true" class="astro-cg55etiy astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-r2p65idu"><span class="sr-only astro-r2p65idu">Selectionner le thème</span><svg aria-hidden="true" class="icon label-icon astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-r2p65idu"><option value="dark" class="astro-r2p65idu">Sombre</option><option value="light" class="astro-r2p65idu">Clair</option><option value="auto" selected class="astro-r2p65idu">Auto</option></select><svg aria-hidden="true" class="icon caret astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><starlight-lang-select><label style="--sl-select-width: 7em" class="astro-r2p65idu"><span class="sr-only astro-r2p65idu">Selectionner la langue</span><svg aria-hidden="true" class="icon label-icon astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path fill-rule="evenodd" d="M8.516 3a.94.94 0 0 0-.941.94v1.15H2.94a.94.94 0 1 0 0 1.882h7.362a7.422 7.422 0 0 1-1.787 3.958 7.42 7.42 0 0 1-1.422-2.425.94.94 0 1 0-1.774.627 9.303 9.303 0 0 0 1.785 3.043 7.422 7.422 0 0 1-4.164 1.278.94.94 0 1 0 0 1.881 9.303 9.303 0 0 0 5.575-1.855 9.303 9.303 0 0 0 4.11 1.74l-.763 1.525a.968.968 0 0 0-.016.034l-1.385 2.77a.94.94 0 1 0 1.683.841l1.133-2.267h5.806l1.134 2.267a.94.94 0 0 0 1.683-.841l-1.385-2.769a.95.95 0 0 0-.018-.036l-3.476-6.951a.94.94 0 0 0-1.682 0l-1.82 3.639a7.423 7.423 0 0 1-3.593-1.256 9.303 9.303 0 0 0 2.27-5.203h1.894a.94.94 0 0 0 0-1.881H9.456V3.94A.94.94 0 0 0 8.516 3Zm6.426 11.794a1.068 1.068 0 0 1-.02.039l-.703 1.407h3.924l-1.962-3.924-1.24 2.478Z" clip-rule="evenodd"/></svg><select autocomplete="off" class="astro-r2p65idu"><option value="/reference/configuration/" class="astro-r2p65idu">English</option><option value="/fr/reference/configuration/" selected class="astro-r2p65idu">Français</option></select><svg aria-hidden="true" class="icon caret astro-r2p65idu astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-lang-select></div></div></div></div></nav><div class="main-frame astro-gqpr5s5a"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()}),addEventListener(`pageHide`,a);</script><div class="lg:sl-flex astro-abfeecmu"><aside class="right-sidebar-container print:hidden astro-abfeecmu"><div class="right-sidebar astro-abfeecmu"><div class="lg:sl-hidden astro-q5mffni3"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-5ulgm6bh"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-5ulgm6bh"><details id="starlight__mobile-toc" class="astro-5ulgm6bh"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-5ulgm6bh"><span class="toggle sl-flex astro-5ulgm6bh">Sur cette page<svg aria-hidden="true" class="caret astro-5ulgm6bh astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-5ulgm6bh"></span></summary><div class="dropdown astro-5ulgm6bh"><ul class="isMobile astro-cxyftcne" style="--depth: 0;"><li style="--depth: 0;" class="astro-cxyftcne"><a href="#_top" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">Vue d’ensemble</span></a></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#où-vivent-les-fichiers" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">Où vivent les fichiers</span></a></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#configjson" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">config.json</span></a><ul class="isMobile astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#champs" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Champs</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#comment-la-config-effective-est-résolue" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Comment la config effective est résolue</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#erreurs" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Erreurs</span></a></li></ul></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#statejson" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">state.json</span></a><ul class="isMobile astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#forme-de-premier-niveau" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Forme de premier niveau</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#champs-dentrée-du-manifest" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Champs d’entrée du manifest</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#exemple" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Exemple</span></a></li></ul></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#consentjson" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">consent.json</span></a><ul class="isMobile astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#forme-de-premier-niveau-1" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Forme de premier niveau</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#champs-dentrée" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Champs d’entrée</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#exemple-1" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Exemple</span></a></li></ul></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#variables-denvironnement" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">Variables d’environnement</span></a><ul class="isMobile astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#résolution-du-home" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Résolution du home</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#couleur" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Couleur</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#couche-env-de-la-config" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Couche env de la config</span></a></li></ul></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.BcSo_yiZ.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-q5mffni3"><div class="sl-container astro-q5mffni3"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">Sur cette page</h2><ul class="astro-cxyftcne" style="--depth: 0;"><li style="--depth: 0;" class="astro-cxyftcne"><a href="#_top" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">Vue d’ensemble</span></a></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#où-vivent-les-fichiers" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">Où vivent les fichiers</span></a></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#configjson" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">config.json</span></a><ul class="astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#champs" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Champs</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#comment-la-config-effective-est-résolue" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Comment la config effective est résolue</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#erreurs" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Erreurs</span></a></li></ul></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#statejson" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">state.json</span></a><ul class="astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#forme-de-premier-niveau" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Forme de premier niveau</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#champs-dentrée-du-manifest" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Champs d’entrée du manifest</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#exemple" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Exemple</span></a></li></ul></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#consentjson" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">consent.json</span></a><ul class="astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#forme-de-premier-niveau-1" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Forme de premier niveau</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#champs-dentrée" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Champs d’entrée</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#exemple-1" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Exemple</span></a></li></ul></li><li style="--depth: 0;" class="astro-cxyftcne"><a href="#variables-denvironnement" style="--depth: 0;" class="astro-cxyftcne"><span style="--depth: 0;" class="astro-cxyftcne">Variables d’environnement</span></a><ul class="astro-cxyftcne" style="--depth: 1;"><li style="--depth: 1;" class="astro-cxyftcne"><a href="#résolution-du-home" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Résolution du home</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#couleur" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Couleur</span></a></li><li style="--depth: 1;" class="astro-cxyftcne"><a href="#couche-env-de-la-config" style="--depth: 1;" class="astro-cxyftcne"><span style="--depth: 1;" class="astro-cxyftcne">Couche env de la config</span></a></li></ul></li></ul></nav></starlight-toc><script type="module" src="/_astro/TableOfContents.astro_astro_type_script_index_0_lang.Csloo1VZ.js"></script></div></div></div></aside><div class="main-pane astro-abfeecmu"><main data-pagefind-body class="astro-vdxcvpsm" lang="fr" dir="ltr"><div class="content-panel astro-oil7k7jf"><div class="sl-container astro-oil7k7jf"><h1 id="_top" class="astro-2sm4b3ln">Configuration et fichiers d&#39;état</h1></div></div><div class="content-panel astro-oil7k7jf"><div class="sl-container astro-oil7k7jf"><div class="sl-markdown-content"><p>agent-rigger conserve trois fichiers JSON sur le poste où il tourne : <code dir="auto">config.json</code> (quels catalogs
+sont configurés et comment les installs se comportent par défaut), <code dir="auto">state.json</code> (le
+<a href="/fr/reference/glossary/#manifest">manifest</a> de ce qui est installé), et <code dir="auto">consent.json</code> (le ledger de
+<a href="/fr/reference/glossary/#consent">consent</a> d’exécution). Cette page est le contrat champ par champ de
+chaque fichier (son chemin exact, les champs que l’outil lit et écrit, et leurs types), suivi des
+variables d’environnement que l’outil honore. Le raisonnement derrière le manifest et le ledger de
+consent vit dans <a href="/fr/concepts/safety-and-reversibility/">sûreté et réversibilité</a> et
+<a href="/fr/concepts/trust-and-security/">confiance et sécurité</a> ; cette page ne porte que les formes.</p>
+<div class="sl-heading-wrapper level-h2"><h2 id="où-vivent-les-fichiers">Où vivent les fichiers</h2><a class="sl-anchor-link" href="#où-vivent-les-fichiers"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Où vivent les fichiers »</span></a></div>
+<p>Les chemins sont résolus sous le répertoire home effectif (voir
+<a href="#variables-denvironnement">RIGGER_HOME</a>). Seul <code dir="auto">config.json</code> a une variante de scope project ; le
+manifest et le ledger de consent sont exclusivement de scope user.</p>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Chemin scope user</th>
+<th>Chemin scope project</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">config.json</code></td>
+<td><code dir="auto">~/.config/agent-rigger/config.json</code></td>
+<td><code dir="auto">&lt;cwd&gt;/.agent-rigger/config.json</code></td>
+</tr>
+<tr>
+<td><code dir="auto">state.json</code></td>
+<td><code dir="auto">~/.config/agent-rigger/state.json</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code dir="auto">consent.json</code></td>
+<td><code dir="auto">~/.config/agent-rigger/consent.json</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<div class="sl-heading-wrapper level-h2"><h2 id="configjson">config.json</h2><a class="sl-anchor-link" href="#configjson"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « config.json »</span></a></div>
+<p>Le fichier de configuration enregistre les catalogs configurés et les défauts sur lesquels une
+exécution se rabat quand aucun flag ne les outrepasse. Il est lu en <strong>JSONC</strong> : les commentaires de
+ligne et les virgules finales sont acceptés. Quand l’outil l’écrit (via <code dir="auto">rigger init</code> ou
+<code dir="auto">rigger catalog add/remove</code>), il ajoute un commentaire d’en-tête puis affiche le JSON avec
+indentation :</p>
+<div class="expressive-code"><link rel="stylesheet" href="/_astro/ec.v4551.css"><script type="module" src="/_astro/ec.0vx5m.js"></script><figure class="frame has-title not-content"><figcaption class="header"><span class="title">config.json</span></figcaption><pre data-language="jsonc"><code><div class="ec-line"><div class="code"><span style="--0:#919F9F;--1:#5D6376">// agent-rigger config — edit this file or run `rigger config set`</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"catalogs"</span><span style="--0:#D6DEEB;--1:#403F53">: [</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">    </span></span><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"name"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">example</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"url"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">https://github.com/example/catalog.git</span><span style="--0:#D9F5DD;--1:#111111">"</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">    </span></span><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">  </span></span><span style="--0:#D6DEEB;--1:#403F53">]</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="// agent-rigger config — edit this file or run &#x60;rigger config set&#x60;{  &quot;catalogs&quot;: [    {      &quot;name&quot;: &quot;example&quot;,      &quot;url&quot;: &quot;https://github.com/example/catalog.git&quot;    }  ]}"><div></div></button></div></figure></div>
+<p>Le <code dir="auto">rigger config set &lt;key&gt; &lt;value&gt;</code> du commentaire d’en-tête est une commande livrée. Seul le
+verbe <code dir="auto">set</code> existe (pas de get/list/unset), et il valide avant d’écrire : les clés settables sont
+<code dir="auto">defaultScope</code> (<code dir="auto">user</code> | <code dir="auto">project</code>), <code dir="auto">authMethod</code> (<code dir="auto">provider-cli</code> | <code dir="auto">https</code> | <code dir="auto">ssh</code>) et <code dir="auto">assistants</code>
+(liste CSV d’assistants connus). <code dir="auto">catalogs</code> n’est volontairement pas settable — c’est géré par
+<code dir="auto">rigger catalog add</code> / <code dir="auto">rigger catalog remove</code>, et <code dir="auto">config set catalogs</code> le dit. Une clé inconnue ou
+une valeur hors énumération affiche un <code dir="auto">[error]</code> actionnable et sort en
+<a href="/fr/reference/exit-codes/"><code dir="auto">2</code></a> sans toucher au fichier ; une écriture réussie affiche
+<code dir="auto">config: &lt;key&gt; set to "&lt;value&gt;"</code> avec le chemin cible. L’édition directe du fichier reste prise en
+charge.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="champs">Champs</h3><a class="sl-anchor-link" href="#champs"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Champs »</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Type</th>
+<th>Requis</th>
+<th>Défaut</th>
+<th>Sens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">defaultScope</code></td>
+<td><code dir="auto">"user"</code> | <code dir="auto">"project"</code></td>
+<td>non</td>
+<td><code dir="auto">"user"</code></td>
+<td>Le <a href="/fr/reference/glossary/#scope">scope</a> que <code dir="auto">rigger init</code> persiste dans ce fichier. Pas lu par <code dir="auto">install</code>/<code dir="auto">check</code>/<code dir="auto">remove</code>/<code dir="auto">update</code> ; voir <a href="#comment-la-config-effective-est-r%C3%A9solue">plus bas</a>.</td>
+</tr>
+<tr>
+<td><code dir="auto">catalogs</code></td>
+<td><code dir="auto">CatalogEntry[]</code></td>
+<td>non</td>
+<td><code dir="auto">[]</code></td>
+<td>Les <a href="/fr/reference/glossary/#catalog">catalogs</a> à récupérer. Chaque source est récupérée indépendamment, qualifiée, puis fusionnée. Voir plus bas.</td>
+</tr>
+<tr>
+<td><code dir="auto">authMethod</code></td>
+<td><code dir="auto">"provider-cli"</code> | <code dir="auto">"https"</code> | <code dir="auto">"ssh"</code></td>
+<td>non</td>
+<td>aucun</td>
+<td>La méthode d’authentification que le pre-flight de récupération utilise. Écrit par <code dir="auto">rigger init</code>.</td>
+</tr>
+<tr>
+<td><code dir="auto">assistants</code></td>
+<td><code dir="auto">Assistant[]</code></td>
+<td>non</td>
+<td>aucun</td>
+<td>Les <a href="/fr/reference/glossary/#assistant">assistants</a> cibles pour install/check/remove/update. Quand il ne contient exactement qu’une valeur, celle-ci est utilisée sans invite.</td>
+</tr>
+</tbody>
+</table>
+<p>Chaque <code dir="auto">CatalogEntry</code> de <code dir="auto">catalogs</code> est un objet à deux champs string :</p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Type</th>
+<th>Règle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">name</code></td>
+<td>string</td>
+<td>Doit être présent et de type <code dir="auto">string</code> (une chaîne vide passe), sinon l’entrée entière est éliminée au parsing — la même porte tout-ou-rien que <code dir="auto">url</code>. Sert de préfixe qualifiant pour ses ids.</td>
+</tr>
+<tr>
+<td><code dir="auto">url</code></td>
+<td>string</td>
+<td>Doit être présent, de type <code dir="auto">string</code>, et non vide, sinon l’entrée entière est éliminée au parsing — la même porte que <code dir="auto">name</code>. L’URL git depuis laquelle le catalog est récupéré.</td>
+</tr>
+</tbody>
+</table>
+<p><code dir="auto">assistants</code> n’accepte que les littéraux <code dir="auto">claude</code> et <code dir="auto">opencode</code> ; toute autre valeur (y compris l’id
+réservé <code dir="auto">copilot</code>) est éliminée du tableau au parsing. Les clés de premier niveau inconnues sont
+retirées : elles ne provoquent ni erreur ni round-trip.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="comment-la-config-effective-est-résolue">Comment la config effective est résolue</h3><a class="sl-anchor-link" href="#comment-la-config-effective-est-résolue"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Comment la config effective est résolue »</span></a></div>
+<p><code dir="auto">resolveConfig</code> fusionne plusieurs couches dans la valeur utilisée pour une commande. Un champ
+défini dans une couche de priorité plus haute écrase les couches inférieures ; un champ absent
+n’efface jamais une valeur définie plus bas. De la plus haute à la plus basse priorité :</p>
+<ol>
+<li><strong>flags</strong> — les flags de ligne de commande de l’exécution en cours.</li>
+<li><strong>env</strong> — les variables d’environnement mappées dans la config (voir
+<a href="#variables-denvironnement">plus bas</a>).</li>
+<li><strong>project</strong> — <code dir="auto">&lt;cwd&gt;/.agent-rigger/config.json</code>.</li>
+<li><strong>user</strong> — <code dir="auto">~/.config/agent-rigger/config.json</code>.</li>
+<li><strong>defaults</strong> — <code dir="auto">defaultScope: "user"</code>, <code dir="auto">catalogs: []</code>.</li>
+</ol>
+<p>Le résolveur accepte aussi une couche <code dir="auto">preset</code> entre user et defaults, mais la CLI ne la peuple
+pas (aucune commande ne lit de fichier preset aujourd’hui) ; elle ne peuple pas non plus la couche
+<code dir="auto">flags</code>. <code dir="auto">loadCliConfig</code>, le seul appelant en production du résolveur, ne fournit que <code dir="auto">env</code>,
+<code dir="auto">project</code> et <code dir="auto">user</code>. Donc pour les champs que cette fusion atteint réellement à l’exécution
+(<code dir="auto">catalogs</code>, <code dir="auto">assistants</code>, <code dir="auto">authMethod</code>), la priorité effective est env &gt; project &gt; user &gt; defaults.</p>
+<p><code dir="auto">defaultScope</code> ne fait pas partie de ces champs : aucune commande ne lit la valeur résolue. <code dir="auto">rigger init</code> est le seul lecteur, et uniquement du fichier brut sur disque, pour décider quel
+<code dir="auto">defaultScope</code> écrire à la prochaine sauvegarde. <code dir="auto">install</code>, <code dir="auto">check</code>, <code dir="auto">remove</code>, <code dir="auto">update</code>, et le
+sélecteur de scope interactif ne le consultent jamais. Le scope qu’une exécution cible vient
+directement de <code dir="auto">--scope</code> : <code dir="auto">project</code> quand le flag le dit, <code dir="auto">user</code> dans tous les autres cas. Ni le
+<code dir="auto">defaultScope</code> de <code dir="auto">config.json</code> ni <code dir="auto">RIGGER_SCOPE</code> ne changent cela.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="erreurs">Erreurs</h3><a class="sl-anchor-link" href="#erreurs"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Erreurs »</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Résultat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fichier absent</td>
+<td>Traité comme une config vide (pas d’erreur).</td>
+</tr>
+<tr>
+<td>JSONC valide, racine pas un objet (null ou array)</td>
+<td>Traité comme une config vide.</td>
+</tr>
+<tr>
+<td>JSONC invalide</td>
+<td><code dir="auto">InvalidConfigError</code> — <code dir="auto">Invalid JSONC config in "&lt;path&gt;"</code>. Retombe sur le chemin d’erreur générique ; exit <a href="/fr/reference/exit-codes/"><code dir="auto">1</code></a>, pas <code dir="auto">2</code>.</td>
+</tr>
+<tr>
+<td>String <code dir="auto">catalogUrl</code> de premier niveau présente, mais aucun <code dir="auto">catalogs[]</code> valide</td>
+<td><code dir="auto">LegacyConfigError</code> — <code dir="auto">Obsolete config in "&lt;path&gt;" — run `rigger init` to migrate to catalogs[].</code> Exit <code dir="auto">2</code>.</td>
+</tr>
+</tbody>
+</table>
+<div class="sl-heading-wrapper level-h2"><h2 id="statejson">state.json</h2><a class="sl-anchor-link" href="#statejson"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « state.json »</span></a></div>
+<p><code dir="auto">state.json</code> est le <a href="/fr/reference/glossary/#manifest">manifest</a> local : la source de vérité pour
+ce qui est installé, d’où ça vient, et ce que ça a écrit sur disque. Il est exclusivement de scope
+user et écrit en JSON simple (indentation deux espaces, retour à la ligne final) sans commentaire
+d’en-tête. Il n’existe pas de manifest de scope project.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="forme-de-premier-niveau">Forme de premier niveau</h3><a class="sl-anchor-link" href="#forme-de-premier-niveau"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Forme de premier niveau »</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Type</th>
+<th>Règle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">version</code></td>
+<td>number</td>
+<td>Doit valoir exactement <code dir="auto">1</code>. Un autre nombre est rejeté — un incrément de schéma exige une migration explicite, pas une coercition silencieuse.</td>
+</tr>
+<tr>
+<td><code dir="auto">artifacts</code></td>
+<td><code dir="auto">ManifestEntry[]</code></td>
+<td>Une entrée par artifact installé. Voir <a href="#champs-dentr%C3%A9e-du-manifest">champs d’entrée</a>.</td>
+</tr>
+</tbody>
+</table>
+<p>La lecture du manifest échoue fermé sur un premier niveau corrompu, pour qu’une écriture
+ultérieure ne puisse pas écraser un bon état par un état vide :</p>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Résultat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fichier absent</td>
+<td>Traité comme un manifest vide <code dir="auto">{"version":1,"artifacts":[]}</code> (install neuve).</td>
+</tr>
+<tr>
+<td>Présent, premier niveau pas un objet / <code dir="auto">version</code> pas le nombre <code dir="auto">1</code> / <code dir="auto">artifacts</code> pas un tableau</td>
+<td><code dir="auto">MalformedManifestError</code>. Exit <a href="/fr/reference/exit-codes/"><code dir="auto">2</code></a>.</td>
+</tr>
+<tr>
+<td>Présent, JSON syntaxiquement cassé</td>
+<td><code dir="auto">InvalidJsonError</code>. Exit <code dir="auto">2</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>La validation du premier niveau est stricte ; la forme au niveau entrée reste tolérante, si bien
+que les entrées écrites par une ancienne version (sans champ <code dir="auto">assistant</code> ni <code dir="auto">applied</code>) restent
+lisibles.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="champs-dentrée-du-manifest">Champs d’entrée du manifest</h3><a class="sl-anchor-link" href="#champs-dentrée-du-manifest"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Champs d’entrée du manifest »</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Type</th>
+<th>Requis</th>
+<th>Sens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">id</code></td>
+<td>string</td>
+<td>oui</td>
+<td>L’<a href="/fr/reference/glossary/#qualified-id">id qualifié</a> de l’artifact.</td>
+</tr>
+<tr>
+<td><code dir="auto">nature</code></td>
+<td>enum</td>
+<td>oui</td>
+<td>L’une des huit <a href="/fr/reference/glossary/#nature">natures</a> : <code dir="auto">plugin</code>, <code dir="auto">guardrail</code>, <code dir="auto">context</code>, <code dir="auto">skill</code>, <code dir="auto">agent</code>, <code dir="auto">mcp</code>, <code dir="auto">tool</code>, <code dir="auto">hook</code>.</td>
+</tr>
+<tr>
+<td><code dir="auto">ref</code></td>
+<td>string</td>
+<td>oui</td>
+<td>Le <a href="/fr/reference/glossary/#ref">ref</a> auquel l’artifact a été récupéré — un tag semver.</td>
+</tr>
+<tr>
+<td><code dir="auto">sha</code></td>
+<td>string</td>
+<td>oui</td>
+<td>Le <a href="/fr/reference/glossary/#sha">sha</a> de commit résolu — épingle le contenu et permet à l’outil de détecter le <a href="/fr/reference/glossary/#drift">drift</a>.</td>
+</tr>
+<tr>
+<td><code dir="auto">scope</code></td>
+<td><code dir="auto">"user"</code> | <code dir="auto">"project"</code></td>
+<td>oui</td>
+<td>Le <a href="/fr/reference/glossary/#scope">scope</a> sous lequel l’artifact a été installé.</td>
+</tr>
+<tr>
+<td><code dir="auto">installedAt</code></td>
+<td>string</td>
+<td>oui</td>
+<td>Horodatage ISO-8601 de l’install.</td>
+</tr>
+<tr>
+<td><code dir="auto">files</code></td>
+<td>string[]</td>
+<td>oui</td>
+<td>Chemins absolus des fichiers écrits ou gérés pour cette entrée. La détection de drift par existence lit cette liste.</td>
+</tr>
+<tr>
+<td><code dir="auto">applied</code></td>
+<td><code dir="auto">AppliedPayload</code></td>
+<td>non</td>
+<td>Enregistrement structuré des mutations que l’install a appliquées, pour que <code dir="auto">remove</code> puisse les rejouer exactement. Absent sur les entrées écrites avant l’existence de ce champ. Voir plus bas.</td>
+</tr>
+<tr>
+<td><code dir="auto">assistant</code></td>
+<td><code dir="auto">Assistant</code></td>
+<td>non</td>
+<td>L’<a href="/fr/reference/glossary/#assistant">assistant</a> pour lequel l’entrée a été installée. Absent sur les entrées héritées → traité comme <code dir="auto">claude</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>L’identité d’une entrée est le triplet <code dir="auto">(id, scope, assistant)</code> : le même artifact peut être
+installé à la fois pour <code dir="auto">claude</code> et pour <code dir="auto">opencode</code> sans que l’un n’écrase l’autre.</p>
+<p>Le payload <code dir="auto">applied</code> est une union discriminée sur son champ <code dir="auto">kind</code>. Chaque kind enregistre
+exactement ce qu’une <a href="/fr/reference/glossary/#nature">nature</a> donnée a écrit, ce qui est ce qui
+rend une suppression une réversion exacte :</p>
+<table>
+<thead>
+<tr>
+<th><code dir="auto">kind</code></th>
+<th>Enregistré pour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">guardrail</code></td>
+<td>Les jeux de règles deny + allow fusionnés dans une cible guardrail.</td>
+</tr>
+<tr>
+<td><code dir="auto">context</code></td>
+<td>Le contenu AGENTS.md écrit plus sa baseline de restauration.</td>
+</tr>
+<tr>
+<td><code dir="auto">hook</code></td>
+<td>L’<code dir="auto">event</code>, le <code dir="auto">matcher</code>, la <code dir="auto">command</code> et le <code dir="auto">timeout</code> optionnel enregistrés.</td>
+</tr>
+<tr>
+<td><code dir="auto">link</code></td>
+<td>Les chemins absolus écrits pour un skill ou un agent lié.</td>
+</tr>
+<tr>
+<td><code dir="auto">opencode-permission</code></td>
+<td>Le fragment de permission fusionné dans <code dir="auto">opencode.json</code>.</td>
+</tr>
+<tr>
+<td><code dir="auto">opencode-mcp</code></td>
+<td>L’id du serveur MCP opencode et sa config rendue (secrets en tant que références d’env).</td>
+</tr>
+<tr>
+<td><code dir="auto">claude-mcp</code></td>
+<td>L’id du serveur MCP Claude Code, sa config rendue, et le scope sous lequel il a été enregistré.</td>
+</tr>
+</tbody>
+</table>
+<p>Une entrée de nature <code dir="auto">tool</code> n’enregistre que son check de présence : réaliser l’install d’un tool
+elle-même n’est pas encore livré.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="exemple">Exemple</h3><a class="sl-anchor-link" href="#exemple"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Exemple »</span></a></div>
+<div class="expressive-code"><figure class="frame has-title not-content"><figcaption class="header"><span class="title">state.json</span></figcaption><pre data-language="json"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"version"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">1</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"artifacts"</span><span style="--0:#D6DEEB;--1:#403F53">: [</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">    </span></span><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"id"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">example/skill:hello-rigger</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"nature"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">skill</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"ref"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">v1.0.0</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"sha"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">deadbeef</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"scope"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">user</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"installedAt"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">2026-07-16T09:12:00.000Z</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"files"</span><span style="--0:#D6DEEB;--1:#403F53">: [</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">/home/you/.config/agent-rigger/skills/hello-rigger/SKILL.md</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">],</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"assistant"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">claude</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"applied"</span><span style="--0:#D6DEEB;--1:#403F53">: {</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#096E72">"kind"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">link</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">        </span><span style="--0:#7FDBCA;--1:#096E72">"files"</span><span style="--0:#D6DEEB;--1:#403F53">: [</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">/home/you/.config/agent-rigger/skills/hello-rigger/SKILL.md</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">    </span></span><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">  </span></span><span style="--0:#D6DEEB;--1:#403F53">]</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="{  &quot;version&quot;: 1,  &quot;artifacts&quot;: [    {      &quot;id&quot;: &quot;example/skill:hello-rigger&quot;,      &quot;nature&quot;: &quot;skill&quot;,      &quot;ref&quot;: &quot;v1.0.0&quot;,      &quot;sha&quot;: &quot;deadbeef&quot;,      &quot;scope&quot;: &quot;user&quot;,      &quot;installedAt&quot;: &quot;2026-07-16T09:12:00.000Z&quot;,      &quot;files&quot;: [&quot;/home/you/.config/agent-rigger/skills/hello-rigger/SKILL.md&quot;],      &quot;assistant&quot;: &quot;claude&quot;,      &quot;applied&quot;: {        &quot;kind&quot;: &quot;link&quot;,        &quot;files&quot;: [&quot;/home/you/.config/agent-rigger/skills/hello-rigger/SKILL.md&quot;]      }    }  ]}"><div></div></button></div></figure></div>
+<div class="sl-heading-wrapper level-h2"><h2 id="consentjson">consent.json</h2><a class="sl-anchor-link" href="#consentjson"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « consent.json »</span></a></div>
+<p><code dir="auto">consent.json</code> est le ledger de consent d’exécution. Une commande <code dir="auto">check</code> de catalog exécute du
+contenu shell arbitraire issu du catalog ; confirmer un plan d’install n’est pas en soi un consent
+à exécuter ces commandes. Ce consent est granulaire — par paire <code dir="auto">(id, command)</code>, pas par catalog —
+et enregistré ici, si bien qu’une commande déjà approuvée n’est jamais reproposée. Une commande
+modifiée, même sous le même id, redemande toujours confirmation. Le raisonnement complet est dans
+<a href="/fr/concepts/trust-and-security/">confiance et sécurité</a>. Le fichier est exclusivement de scope
+user, écrit en JSON simple.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="forme-de-premier-niveau-1">Forme de premier niveau</h3><a class="sl-anchor-link" href="#forme-de-premier-niveau-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Forme de premier niveau »</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Type</th>
+<th>Sens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">version</code></td>
+<td>number</td>
+<td>Version de schéma du ledger — <code dir="auto">1</code>.</td>
+</tr>
+<tr>
+<td><code dir="auto">entries</code></td>
+<td><code dir="auto">ConsentEntry[]</code></td>
+<td>Une entrée par paire <code dir="auto">(id, command)</code> approuvée.</td>
+</tr>
+</tbody>
+</table>
+<p>Si un fichier lu a un <code dir="auto">version</code> qui n’est pas un nombre ou des <code dir="auto">entries</code> qui ne sont pas un
+tableau, il est traité comme un ledger vide (pas une erreur). Un JSON syntaxiquement cassé reçoit
+exactement le même traitement : contrairement à config.json (<code dir="auto">InvalidConfigError</code>) et state.json
+(<code dir="auto">InvalidJsonError</code>), un échec de parsing ici ne lève aucune erreur ni aucun exit code distinct ;
+il est intercepté et ramené à un ledger vide, exactement comme un désaccord de forme. Le ledger
+est une mémoïsation indicative, et un ledger malformé ou non parsable échoue toujours fermé vers
+« pas consenti » (redemander), jamais ouvert par confiance.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="champs-dentrée">Champs d’entrée</h3><a class="sl-anchor-link" href="#champs-dentrée"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Champs d’entrée »</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Type</th>
+<th>Requis</th>
+<th>Sens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">id</code></td>
+<td>string</td>
+<td>oui</td>
+<td>L’id d’entrée de catalog auquel la commande appartient, par exemple <code dir="auto">tool:glab</code>.</td>
+</tr>
+<tr>
+<td><code dir="auto">commandHash</code></td>
+<td>string</td>
+<td>oui</td>
+<td>Le digest hex sha256 de la chaîne de commande exacte qui a été approuvée.</td>
+</tr>
+<tr>
+<td><code dir="auto">approvedAt</code></td>
+<td>string</td>
+<td>oui</td>
+<td>Horodatage ISO-8601 de l’approbation.</td>
+</tr>
+<tr>
+<td><code dir="auto">sha</code></td>
+<td>string</td>
+<td>non</td>
+<td>Le <a href="/fr/reference/glossary/#sha">sha</a> de provenance catalog au moment de l’approbation — audit seulement. Ne fait jamais partie de la clé de correspondance.</td>
+</tr>
+</tbody>
+</table>
+<p>La clé de correspondance est la paire <code dir="auto">(id, commandHash)</code>. Changer la commande (même sous un sha
+de catalog inchangé) redemande confirmation ; une commande inchangée reste consentie même si le
+sha du catalog change en dessous. Un <code dir="auto">sha</code> présent sur une entrée n’affecte jamais si elle
+correspond. L’enregistrement est idempotent : une paire <code dir="auto">(id, commandHash)</code> déjà présente est
+laissée intacte, sans doublon ni mise à jour d’horodatage.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="exemple-1">Exemple</h3><a class="sl-anchor-link" href="#exemple-1"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Exemple »</span></a></div>
+<div class="expressive-code"><figure class="frame has-title not-content"><figcaption class="header"><span class="title">consent.json</span></figcaption><pre data-language="json"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"version"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">1</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#096E72">"entries"</span><span style="--0:#D6DEEB;--1:#403F53">: [</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">    </span></span><span style="--0:#D6DEEB;--1:#403F53">{</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"id"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">tool:glab</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"commandHash"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"approvedAt"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">2026-07-16T09:12:00.000Z</span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#D6DEEB;--1:#403F53">,</span></div></div><div class="ec-line"><div class="code"><span class="indent">      </span><span style="--0:#7FDBCA;--1:#096E72">"sha"</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#D9F5DD;--1:#111111">"</span><span style="--0:#C789D6;--1:#7C5686">deadbeef</span><span style="--0:#D9F5DD;--1:#111111">"</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">    </span></span><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">  </span></span><span style="--0:#D6DEEB;--1:#403F53">]</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">}</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="{  &quot;version&quot;: 1,  &quot;entries&quot;: [    {      &quot;id&quot;: &quot;tool:glab&quot;,      &quot;commandHash&quot;: &quot;3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b&quot;,      &quot;approvedAt&quot;: &quot;2026-07-16T09:12:00.000Z&quot;,      &quot;sha&quot;: &quot;deadbeef&quot;    }  ]}"><div></div></button></div></figure></div>
+<div class="sl-heading-wrapper level-h2"><h2 id="variables-denvironnement">Variables d’environnement</h2><a class="sl-anchor-link" href="#variables-denvironnement"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Variables d’environnement »</span></a></div>
+<p>Cinq variables d’environnement sont lues par l’outil. Deux orientent où vivent les fichiers de
+scope user, une contrôle la couleur, et deux alimentent la couche <code dir="auto">env</code> de la config.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Lue pour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code dir="auto">RIGGER_HOME</code></td>
+<td>Outrepasse le répertoire home utilisé pour chaque chemin de scope user. Prioritaire sur <code dir="auto">HOME</code> ; voir l’ordre de résolution plus bas. Voir <a href="/fr/reference/glossary/#rigger_home">RIGGER_HOME</a>.</td>
+</tr>
+<tr>
+<td><code dir="auto">HOME</code></td>
+<td>Le répertoire home utilisé quand <code dir="auto">RIGGER_HOME</code> est absent ou vide.</td>
+</tr>
+<tr>
+<td><code dir="auto">NO_COLOR</code></td>
+<td>Désactive la sortie couleur ANSI. Voir <a href="/fr/reference/glossary/#no_color">NO_COLOR</a>.</td>
+</tr>
+<tr>
+<td><code dir="auto">RIGGER_SCOPE</code></td>
+<td>Mappée dans le <code dir="auto">defaultScope</code> de la couche <code dir="auto">env</code> de la config (accepte <code dir="auto">user</code> ou <code dir="auto">project</code>), mais aucune commande ne lit le <code dir="auto">defaultScope</code> résolu — voir <a href="#comment-la-config-effective-est-r%C3%A9solue">comment la config effective est résolue</a>. N’a aucun effet observable sur le scope qu’une exécution cible.</td>
+</tr>
+<tr>
+<td><code dir="auto">RIGGER_AUTH_METHOD</code></td>
+<td>Définit <code dir="auto">authMethod</code> via la couche <code dir="auto">env</code> de la config. Accepte <code dir="auto">provider-cli</code>, <code dir="auto">https</code>, ou <code dir="auto">ssh</code>.</td>
+</tr>
+</tbody>
+</table>
+<div class="sl-heading-wrapper level-h3"><h3 id="résolution-du-home">Résolution du home</h3><a class="sl-anchor-link" href="#résolution-du-home"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Résolution du home »</span></a></div>
+<p>Le répertoire home effectif pour chaque chemin de scope user est résolu dans cet ordre, la
+première valeur non vide l’emportant :</p>
+<ol>
+<li><code dir="auto">RIGGER_HOME</code> (une chaîne non vide).</li>
+<li><code dir="auto">HOME</code> (une chaîne non vide).</li>
+<li>Le répertoire home du système d’exploitation.</li>
+</ol>
+<p><code dir="auto">RIGGER_HOME</code> est l’unique levier utilisé pour pointer l’outil vers un répertoire isolé. C’est
+exactement ce que le <a href="/fr/start/sandbox/">sandbox</a> définit, si bien que les vraies commandes ne
+touchent jamais votre vrai <code dir="auto">~/</code>.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="couleur">Couleur</h3><a class="sl-anchor-link" href="#couleur"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Couleur »</span></a></div>
+<p>La couleur n’est émise que quand la sortie standard est un vrai terminal <strong>et</strong> que <code dir="auto">NO_COLOR</code>
+est absent. Toute valeur définit la variable, donc <code dir="auto">NO_COLOR=1</code> et <code dir="auto">NO_COLOR=</code> désactivent tous
+deux la couleur. Une décision explicite <code dir="auto">--color</code>/<code dir="auto">--no-color</code>, quand une commande l’expose, est
+prioritaire sur cette auto-détection. Voir le <a href="/fr/guides/ci-and-scripts/">guide CI et scripts</a>
+pour le contrôle de la couleur dans un pipeline.</p>
+<div class="sl-heading-wrapper level-h3"><h3 id="couche-env-de-la-config">Couche env de la config</h3><a class="sl-anchor-link" href="#couche-env-de-la-config"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore>Section intitulée « Couche env de la config »</span></a></div>
+<p><code dir="auto">RIGGER_SCOPE</code> et <code dir="auto">RIGGER_AUTH_METHOD</code> sont mappées dans la couche <code dir="auto">env</code> de la config, au-dessus
+des deux fichiers de config et en dessous des flags de ligne de commande. Une valeur vide ou qui
+n’est pas l’un des littéraux acceptés est ignorée : elle n’efface jamais une valeur définie par un
+fichier de config ou une couche inférieure.</p>
+</div><footer class="sl-flex astro-xhxjzfa7"><div class="meta sl-flex astro-xhxjzfa7"></div><div class="pagination-links print:hidden astro-jgq3vlii" dir="ltr"><a href="/fr/reference/natures-matrix/" rel="prev" class="astro-jgq3vlii"><svg aria-hidden="true" class="astro-jgq3vlii astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-jgq3vlii">Précédent<br class="astro-jgq3vlii"><span class="link-title astro-jgq3vlii">Natures × assistants × scopes</span></span></a><a href="/fr/reference/hook-events/" rel="next" class="astro-jgq3vlii"><svg aria-hidden="true" class="astro-jgq3vlii astro-n5k4ipy7" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-jgq3vlii">Suivant<br class="astro-jgq3vlii"><span class="link-title astro-jgq3vlii">Events de hook</span></span></a></div></footer></div></div></main></div></div></div></div></body></html>
